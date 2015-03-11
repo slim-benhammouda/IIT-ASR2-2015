@@ -21,8 +21,12 @@ import com.squeezer.asr2application.fragment.MainFragment;
 import com.squeezer.asr2application.fragment.dialog.AddDialogFragment;
 
 
-public class MainActivity extends ActionBarActivity implements MainFragment.OnButtonClicked,AddDialogFragment.OnAddFragmentInteractionListener {
+public class MainActivity extends ActionBarActivity implements MainFragment.OnButtonClicked, AddDialogFragment.OnAddFragmentInteractionListener {
 
+    public static final String EXTRA_NAME_KEY = "name";
+    public static final String EXTRA_LAST_NAME_KEY = "last_name";
+    public static final String EXTRA_AGE_KEY = "age";
+    public static final int RESULT_REQUEST_CODE = 1000;
 
 
     @Override
@@ -93,11 +97,16 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
         switch (id) {
             case R.id.action_settings:
                 Intent intent = new Intent(getApplicationContext(), Activity2.class);
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putInt(EXTRA_AGE_KEY, 25);
+                bundle.putCharSequence(EXTRA_NAME_KEY, "Slim");
+                bundle.putCharSequence(EXTRA_LAST_NAME_KEY, "BH");
+                intent.putExtras(bundle);
+                startActivityForResult(intent,RESULT_REQUEST_CODE);
                 break;
             case R.id.action_add:
                 AddDialogFragment addDialogFragment = AddDialogFragment.newInstance(this);
-                addDialogFragment.show(getSupportFragmentManager(),"test");
+                addDialogFragment.show(getSupportFragmentManager(), "test");
                 break;
             case R.id.action_about:
                 getSupportFragmentManager().beginTransaction().replace(R.id.bottom_layout, new Fragment2()).commit();

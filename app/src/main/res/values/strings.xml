@@ -9,4 +9,13 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+    <!--activity 2 resources-->
+
+    <string name="name_label">Your Name</string>
+    <string name="last_name_label">Your Last Name</string>
+    <string name="age_label">Your Age</string>
+
+
+
 </resources>
