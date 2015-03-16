@@ -14,10 +14,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private Button mButton;
 
-    private static  OnButtonClicked mListener;
+    private static OnButtonClicked mListener;
 
 
-    public static MainFragment newInstance(OnButtonClicked listener){
+    public static MainFragment newInstance(OnButtonClicked listener) {
 
         mListener = listener;
 
@@ -31,18 +31,18 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        mButton = (Button)rootView.findViewById(R.id.button);
-       mButton.setOnClickListener(this);
+        mButton = (Button) rootView.findViewById(R.id.button);
+        mButton.setOnClickListener(this);
         return rootView;
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.button:
-if (mListener != null){
-    mListener.buttonClicked();
-}
+                if (mListener != null) {
+                    mListener.buttonClicked();
+                }
                 break;
         }
     }

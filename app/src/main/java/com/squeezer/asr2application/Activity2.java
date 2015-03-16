@@ -10,13 +10,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.squeezer.asr2application.view.CustomLabelEditView;
+
 
 public class Activity2 extends ActionBarActivity implements View.OnClickListener {
 
 
-    private EditText mNameField;
-    private EditText mLastNameField;
-    private EditText mAgeField;
+    private CustomLabelEditView mNameField;
+    private CustomLabelEditView mLastNameField;
+    private CustomLabelEditView mAgeField;
 
     private Button mOkButton;
     private Button mCancelButton;
@@ -30,18 +32,17 @@ public class Activity2 extends ActionBarActivity implements View.OnClickListener
         initViews();
 
 
-
         Intent intent = getIntent();
-        if( intent != null) {
-            Bundle bundle= intent.getExtras();
-            if(bundle != null){
-                int age = intent.getIntExtra(MainActivity.EXTRA_AGE_KEY,-1);
-                CharSequence name = bundle.getCharSequence(MainActivity.EXTRA_NAME_KEY,"Default Name");
-                CharSequence lastName = bundle.getCharSequence(MainActivity.EXTRA_LAST_NAME_KEY,"Default Last Name");
+        if (intent != null) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                int age = intent.getIntExtra(MainActivity.EXTRA_AGE_KEY, -1);
+                CharSequence name = bundle.getCharSequence(MainActivity.EXTRA_NAME_KEY, "Default Name");
+                CharSequence lastName = bundle.getCharSequence(MainActivity.EXTRA_LAST_NAME_KEY, "Default Last Name");
 
-                mNameField.setText(name);
-                mLastNameField.setText(lastName);
-                mAgeField.setText(String.valueOf(age));
+                mNameField.setFieldText(name.toString());
+                mLastNameField.setFieldText(lastName.toString());
+                mAgeField.setFieldText(String.valueOf(age));
             }
 
         }
@@ -50,14 +51,19 @@ public class Activity2 extends ActionBarActivity implements View.OnClickListener
     }
 
 
-    private void initViews(){
-        mNameField= (EditText)findViewById(R.id.name_field);
-        mLastNameField= (EditText)findViewById(R.id.last_name_field);
-        mAgeField= (EditText)findViewById(R.id.age_field);
+    private void initViews() {
+        mNameField = (CustomLabelEditView) findViewById(R.id.name_component);
+        mLastNameField = (CustomLabelEditView) findViewById(R.id.last_name_component);
+        mAgeField = (CustomLabelEditView) findViewById(R.id.age_component);
 
-        mOkButton= (Button)findViewById(R.id.ok_button);
+        mNameField.setLabelText(getResources().getString(R.string.name_label));
+        mLastNameField.setLabelText(getResources().getString(R.string.last_name_label));
+        mAgeField.setLabelText(getResources().getString(R.string.age_label));
+
+
+        mOkButton = (Button) findViewById(R.id.ok_button);
         mOkButton.setOnClickListener(this);
-        mCancelButton= (Button)findViewById(R.id.cancel_button);
+        mCancelButton = (Button) findViewById(R.id.cancel_button);
         mCancelButton.setOnClickListener(this);
     }
 
@@ -86,11 +92,23 @@ public class Activity2 extends ActionBarActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.ok_button:
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(MainActivity.EXTRA_AGE_KEY, Integer.valueOf(mAgeField.getFieldText()));
+                bundle.putCharSequence(MainActivity.EXTRA_NAME_KEY, mNameField.getFieldText());
+                bundle.putCharSequence(MainActivity.EXTRA_LAST_NAME_KEY, mLastNameField.getFieldText());
+
+                Intent intent = new Intent();
+                intent.putExtras(bundle);
+
+                setResult(RESULT_OK, intent);
+                finish();
                 break;
             case R.id.cancel_button:
+                setResult(RESULT_CANCELED);
+                finish();
                 break;
             default:
                 break;

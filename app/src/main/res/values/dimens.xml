@@ -3,7 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="activity_2_vertical_margin">20dp</dimen>
+    <dimen name="activity_2_vertical_margin">40dp</dimen>
+
+    <dimen name="custom_label_edit_preferred_height">48dp</dimen>
 
 
 </resources>

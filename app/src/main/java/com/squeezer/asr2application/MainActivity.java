@@ -102,7 +102,7 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
                 bundle.putCharSequence(EXTRA_NAME_KEY, "Slim");
                 bundle.putCharSequence(EXTRA_LAST_NAME_KEY, "BH");
                 intent.putExtras(bundle);
-                startActivityForResult(intent,RESULT_REQUEST_CODE);
+                startActivityForResult(intent, RESULT_REQUEST_CODE);
                 break;
             case R.id.action_add:
                 AddDialogFragment addDialogFragment = AddDialogFragment.newInstance(this);
@@ -113,6 +113,17 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == RESULT_REQUEST_CODE) {
+
+            Log.v("slim", "onActivityResult called with request code = RESULT_REQUEST_CODE and result code = " + resultCode);
+
+        }
+
     }
 
 
@@ -130,4 +141,6 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
     public void onCancel() {
 
     }
+
+
 }
