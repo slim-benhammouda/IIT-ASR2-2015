@@ -37,13 +37,17 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
 
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, MainFragment.newInstance(this))
-                    .commit();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.bottom_layout, new Fragment2())
-                    .commit();
+            Log.v("slim", "savedInstanceState == null");
+        }else{
+            Log.v("slim", "savedInstanceState != null");
         }
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, MainFragment.newInstance(this))
+                .commit();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.bottom_layout, new Fragment2())
+                .commit();
 
 
     }
@@ -109,7 +113,8 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
                 addDialogFragment.show(getSupportFragmentManager(), "test");
                 break;
             case R.id.action_about:
-                getSupportFragmentManager().beginTransaction().replace(R.id.bottom_layout, new Fragment2()).commit();
+                Intent intent3 = new Intent(getApplicationContext(), Activity3.class);
+                startActivity(intent3);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -118,9 +123,10 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == RESULT_REQUEST_CODE) {
 
+        if (requestCode == RESULT_REQUEST_CODE) {
             Log.v("slim", "onActivityResult called with request code = RESULT_REQUEST_CODE and result code = " + resultCode);
+            //DO here what ever you want
 
         }
 

@@ -31,7 +31,6 @@ public class Activity2 extends ActionBarActivity implements View.OnClickListener
 
         initViews();
 
-
         Intent intent = getIntent();
         if (intent != null) {
             Bundle bundle = intent.getExtras();
