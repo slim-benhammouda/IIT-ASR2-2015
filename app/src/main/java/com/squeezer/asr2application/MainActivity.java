@@ -139,14 +139,11 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
     }
 
     @Override
-    public void onOk() {
+    public void onOk(String title,String description) {
         Log.v("slim", "ok clicked");
     }
 
-    @Override
-    public void onCancel() {
 
-    }
 
 
 }

@@ -13,4 +13,16 @@
         <item>Pluton</item>
     </array>
 
+    <array name="my_list_content_description">
+        <item>planète la plus petite du système solaire</item>
+        <item>planète la plus chaude</item>
+        <item>Gaia</item>
+        <item>La planète rouge</item>
+        <item>la plus grosse planète</item>
+        <item>la planète avec anneaux</item>
+        <item>la planète inversé</item>
+        <item>tbalbiz</item>
+        <item>la planète déchue</item>
+    </array>
+
 </resources>
