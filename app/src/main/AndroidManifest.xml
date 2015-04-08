@@ -22,6 +22,14 @@
         <activity
             android:name=".Activity3"
             android:label="@string/title_activity_3" />
+        <activity
+            android:name=".Activity4"
+            android:label="@string/title_activity_activity4" >
+        </activity>
+        <activity
+            android:name=".Activity5"
+            android:label="@string/title_activity_activity5" >
+        </activity>
     </application>
 
 </manifest>

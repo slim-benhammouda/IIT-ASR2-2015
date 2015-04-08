@@ -14,6 +14,7 @@ import com.squeezer.asr2application.R;
 import com.squeezer.asr2application.core.ListItemWrapper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CustomAdapter extends BaseAdapter {
 
@@ -48,18 +49,39 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Log.v("slim","position to update = "+position);
+        Log.v("slim", "position to update = " + position);
 
-        convertView = mLayoutInflater.inflate(R.layout.custom_list_item_layout,parent,false);
+        long startTime = Calendar.getInstance().getTimeInMillis();
+        ViewHolder viewHolder;
 
-        ImageView image = (ImageView)convertView.findViewById(R.id.image);
-        TextView title = (TextView)convertView.findViewById(R.id.title);
-        TextView description = (TextView)convertView.findViewById(R.id.description);
+        if (convertView == null) {
+            Log.v("slim", "convertView==null");
+            convertView = mLayoutInflater.inflate(R.layout.custom_list_item_layout, parent, false);
+            viewHolder = new ViewHolder();
+            viewHolder.mImageView = (ImageView) convertView.findViewById(R.id.image);
+            viewHolder.mTitleTextView = (TextView) convertView.findViewById(R.id.title);
+            viewHolder.mDescriptionTextView = (TextView) convertView.findViewById(R.id.description);
+            convertView.setTag(viewHolder);
 
-        image.setImageResource(mListContent.get(position).getImageRes());
-        title.setText(mListContent.get(position).getTitle());
-        description.setText(mListContent.get(position).getDescription());
+        } else {
+            Log.v("slim", "convertView!=null");
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+        viewHolder.mImageView.setImageResource(mListContent.get(position).getImageRes());
+        viewHolder.mTitleTextView.setText(mListContent.get(position).getTitle());
+        viewHolder.mDescriptionTextView.setText(mListContent.get(position).getDescription());
 
+        long endTime = Calendar.getInstance().getTimeInMillis();
+        Log.v("slim", "-----spent time to update = " + (endTime - startTime));
         return convertView;
+    }
+
+
+    private static class ViewHolder {
+
+        ImageView mImageView;
+        TextView mTitleTextView;
+        TextView mDescriptionTextView;
+
     }
 }

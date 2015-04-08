@@ -16,6 +16,8 @@
     <string name="name_label">Your Name</string>
     <string name="last_name_label">Your Last Name</string>
     <string name="age_label">Your Age</string>
+    <string name="title_activity_activity4">Activity4</string>
+    <string name="title_activity_activity5">Activity5</string>
 
 
 

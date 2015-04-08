@@ -8,6 +8,11 @@
         android:title="add"
         android:orderInCategory="100"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_view"
+        android:title="view"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_settings"

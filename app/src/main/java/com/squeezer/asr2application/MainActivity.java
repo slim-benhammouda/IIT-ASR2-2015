@@ -116,6 +116,10 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
                 Intent intent3 = new Intent(getApplicationContext(), Activity3.class);
                 startActivity(intent3);
                 break;
+            case R.id.action_view:
+                Intent intent5 = new Intent(getApplicationContext(), Activity5.class);
+                startActivity(intent5);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

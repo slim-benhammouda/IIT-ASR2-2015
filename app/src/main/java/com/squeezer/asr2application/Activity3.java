@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -19,9 +20,10 @@ import com.squeezer.asr2application.view.CustomLabelEditView;
 import java.util.ArrayList;
 
 
-public class Activity3 extends ActionBarActivity implements AddDialogFragment.OnAddFragmentInteractionListener {
+public class Activity3 extends ActionBarActivity implements AddDialogFragment.OnAddFragmentInteractionListener, AdapterView.OnItemClickListener {
 
     private static final String LIST_CONTENT_KEY = "list_content";
+    public static final String LIST_ITEM_KEY = "list_item";
 
     private ListView mListView;
     private CustomAdapter mAdapter;
@@ -36,23 +38,23 @@ public class Activity3 extends ActionBarActivity implements AddDialogFragment.On
 
         initViews();
 
-        //fillAdapter();
-
 
         if (savedInstanceState == null) {
             Log.v("slim", "savedInstanceState == null");
             mListContent = new ArrayList<ListItemWrapper>();
-        }else{
+
+            fillAdapter();
+        } else {
             Log.v("slim", "savedInstanceState != null");
-            mListContent = (ArrayList)savedInstanceState.getSerializable(LIST_CONTENT_KEY);
+            mListContent = (ArrayList) savedInstanceState.getSerializable(LIST_CONTENT_KEY);
         }
 
-
-
-        mAdapter = new CustomAdapter(getApplicationContext(),mListContent);
+        mAdapter = new CustomAdapter(getApplicationContext(), mListContent);
         mListView.setAdapter(mAdapter);
-    }
+        mListView.setOnItemClickListener(this);
 
+
+    }
 
     private void initViews() {
         mListView = (ListView) findViewById(R.id.list_view);
@@ -66,14 +68,14 @@ public class Activity3 extends ActionBarActivity implements AddDialogFragment.On
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putSerializable(LIST_CONTENT_KEY,mListContent);
+        outState.putSerializable(LIST_CONTENT_KEY, mListContent);
     }
 
-    private void fillAdapter(){
+    private void fillAdapter() {
 
 
-        for(int i = 0; i<9 ;i++){
-            mListContent.add(new ListItemWrapper(R.drawable.ic_launcher,getResources().getStringArray(R.array.my_list_content)[i],getResources().getStringArray(R.array.my_list_content_description)[i]));
+        for (int i = 0; i < 200; i++) {
+            mListContent.add(new ListItemWrapper(R.drawable.ic_launcher, "item title "+i, "item description "+i));
         }
 
     }
@@ -106,10 +108,20 @@ public class Activity3 extends ActionBarActivity implements AddDialogFragment.On
 
 
     @Override
-    public void onOk(String title,String description) {
-        mListContent.add(new ListItemWrapper(R.drawable.ic_launcher,title,description));
-mAdapter.notifyDataSetChanged();
+    public void onOk(String title, String description) {
+        mListContent.add(new ListItemWrapper(R.drawable.ic_launcher, title, description));
+        mAdapter.notifyDataSetChanged();
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.v("slim","clicked position = "+position);
+        Intent intent = new Intent(getApplicationContext(), Activity4.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(LIST_ITEM_KEY, mListContent.get(position));
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+    }
 }
