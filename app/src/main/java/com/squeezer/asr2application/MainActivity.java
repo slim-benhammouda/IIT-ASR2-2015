@@ -1,6 +1,8 @@
 package com.squeezer.asr2application;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -28,6 +30,12 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
     public static final String EXTRA_AGE_KEY = "age";
     public static final int RESULT_REQUEST_CODE = 1000;
 
+    private static final String PREFERENCE_BOTTOM_FRAGMENT_KEY = "bottom_layout_key";
+    private static final String PREFERENCE_BOTTOM_FRAGMENT_VALUE_1 = "fragment_2";
+    private static final String PREFERENCE_BOTTOM_FRAGMENT_VALUE_2 = "fragment_3";
+
+
+    private SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +46,26 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
 
         if (savedInstanceState == null) {
             Log.v("slim", "savedInstanceState == null");
-        }else{
+        } else {
             Log.v("slim", "savedInstanceState != null");
         }
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, MainFragment.newInstance(this))
                 .commit();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.bottom_layout, new Fragment2())
-                .commit();
+
+
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String defaultBottomContent = mSharedPref.getString(PREFERENCE_BOTTOM_FRAGMENT_KEY, PREFERENCE_BOTTOM_FRAGMENT_VALUE_1);
+        if (defaultBottomContent.equals(PREFERENCE_BOTTOM_FRAGMENT_VALUE_1)) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.bottom_layout, new Fragment2())
+                    .commit();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.bottom_layout, new Fragment3())
+                    .commit();
+        }
 
 
     }
@@ -139,15 +157,15 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
 
     @Override
     public void buttonClicked() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.bottom_layout, new Fragment3()).commit();
+        SharedPreferences.Editor prefEditor = mSharedPref.edit();
+        prefEditor.putString(PREFERENCE_BOTTOM_FRAGMENT_KEY, PREFERENCE_BOTTOM_FRAGMENT_VALUE_2);
+       prefEditor.commit();
     }
 
     @Override
-    public void onOk(String title,String description) {
+    public void onOk(String title, String description) {
         Log.v("slim", "ok clicked");
     }
-
-
 
 
 }
