@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.squeezer.asr2application.R;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -97,6 +99,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             PrintWriter out = new PrintWriter(file);
             out.println("test write file android " + System.currentTimeMillis());
             out.close();
+
+            //FileUtils.
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

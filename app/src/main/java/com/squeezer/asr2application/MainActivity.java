@@ -2,6 +2,7 @@ package com.squeezer.asr2application;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,14 +17,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.squeezer.asr2application.core.JokeWrapper;
 import com.squeezer.asr2application.fragment.Fragment2;
 import com.squeezer.asr2application.fragment.Fragment3;
 import com.squeezer.asr2application.fragment.MainFragment;
 import com.squeezer.asr2application.fragment.dialog.AddDialogFragment;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-public class MainActivity extends ActionBarActivity implements MainFragment.OnButtonClicked, AddDialogFragment.OnAddFragmentInteractionListener {
+
+public class MainActivity extends ActionBarActivity implements MainFragment.OnButtonClicked, AddDialogFragment.OnAddFragmentInteractionListener, View.OnClickListener {
 
     public static final String EXTRA_NAME_KEY = "name";
     public static final String EXTRA_LAST_NAME_KEY = "last_name";
@@ -36,6 +50,10 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
 
 
     private SharedPreferences mSharedPref;
+
+    private TextView mJokeText;
+    private Button mJokeButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +84,11 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
                     .add(R.id.bottom_layout, new Fragment3())
                     .commit();
         }
+
+
+        mJokeText = (TextView) findViewById(R.id.text);
+        mJokeButton = (Button) findViewById(R.id.joke_button);
+        mJokeButton.setOnClickListener(this);
 
 
     }
@@ -159,7 +182,7 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
     public void buttonClicked() {
         SharedPreferences.Editor prefEditor = mSharedPref.edit();
         prefEditor.putString(PREFERENCE_BOTTOM_FRAGMENT_KEY, PREFERENCE_BOTTOM_FRAGMENT_VALUE_2);
-       prefEditor.commit();
+        prefEditor.commit();
     }
 
     @Override
@@ -168,4 +191,72 @@ public class MainActivity extends ActionBarActivity implements MainFragment.OnBu
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.joke_button:
+                retrieveJoke();
+                break;
+        }
+    }
+
+
+    private void retrieveJoke() {
+        JokeRequestAsyncTask jokeTask = new JokeRequestAsyncTask();
+        jokeTask.execute();
+
+    }
+
+
+    private class JokeRequestAsyncTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            String result = null;
+            HttpURLConnection con = null;
+            InputStream is = null;
+            try {
+                String wsUrl = "http://api.icndb.com/jokes/random";
+
+                con = (HttpURLConnection) (new URL(wsUrl)).openConnection();
+                con.setRequestMethod("GET");
+                con.setDoInput(true);
+                con.setDoOutput(true);
+                con.connect();
+
+                // read the response
+                StringBuffer buffer = new StringBuffer();
+                is = con.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    buffer.append(line + "\r\n");
+                }
+
+                is.close();
+                con.disconnect();
+                result = buffer.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return result;
+        }
+
+        protected void onPostExecute(String data) {
+
+            Gson gson = new GsonBuilder().create();
+            JokeWrapper
+                    jokeWrapper = gson.fromJson(data,
+                    JokeWrapper.class);
+
+
+            mJokeText.setText(jokeWrapper.getJoke());
+        }
+
+    }
 }

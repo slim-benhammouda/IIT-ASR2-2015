@@ -6,9 +6,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.StrictMode;
 
-/**
- * Created by mariem on 15/04/15.
- */
 public class IitAsr2015Application extends Application {
 
 
