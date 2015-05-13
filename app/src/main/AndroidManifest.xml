@@ -34,6 +34,9 @@
         <activity
             android:name=".Activity5"
             android:label="@string/title_activity_activity5" />
+        <activity
+            android:name=".Activity6"
+            android:label="My Player Activity" />
 
         <receiver
             android:name=".TestReceiver"
@@ -44,9 +47,14 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
                 <action android:name="android.intent.action.HEADSET_PLUG" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".AudioService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

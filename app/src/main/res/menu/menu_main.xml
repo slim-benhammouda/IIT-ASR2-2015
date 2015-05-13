@@ -5,26 +5,28 @@
 
     <item
         android:id="@+id/action_add"
-        android:title="add"
         android:orderInCategory="100"
+        android:title="add"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_view"
-        android:title="view"
         android:orderInCategory="100"
+        android:title="view"
         app:showAsAction="always" />
-
+    <item
+        android:id="@+id/action_player"
+        android:orderInCategory="100"
+        android:title="play"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
-        android:title="@string/action_settings"
         android:orderInCategory="100"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/action_about"
-        android:title="about"
         android:orderInCategory="100"
+        android:title="about"
         app:showAsAction="never" />
-
 
 </menu>
