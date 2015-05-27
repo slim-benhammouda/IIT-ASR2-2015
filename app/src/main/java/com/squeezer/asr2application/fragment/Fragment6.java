@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 import com.squeezer.asr2application.AudioService;
 import com.squeezer.asr2application.R;
@@ -23,13 +24,16 @@ import com.squeezer.asr2application.R;
 import java.lang.ref.WeakReference;
 
 
-public class Fragment6 extends Fragment implements View.OnClickListener {
+public class Fragment6 extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     public static final String MEDIA_PLAYER_APP_MESSENGER_KEY = "app_messenger";
 
 
     private Button mPlayButton;
     private Button mStopButton;
+
+    private SeekBar mSeekBar;
+    private boolean isSeek =false;
 
     private AppHandler mHandler;
     private Messenger mAppMessenger;
@@ -38,8 +42,7 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
 
     private boolean isServiceConnected = false;
 
-    private boolean isPlaying =false;
-
+    private boolean isPlaying = false;
 
 
     public static Fragment6 newInstance() {
@@ -60,6 +63,9 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
         mStopButton = (Button) rootView.findViewById(R.id.stop_button);
         mStopButton.setOnClickListener(this);
 
+        mSeekBar = (SeekBar) rootView.findViewById(R.id.seek_bar);
+        mSeekBar.setOnSeekBarChangeListener(this);
+
         mHandler = new AppHandler(this);
         mAppMessenger = new Messenger(mHandler);
 
@@ -67,7 +73,7 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
                 AudioService.class);
         serviceIntent.putExtra(MEDIA_PLAYER_APP_MESSENGER_KEY, mAppMessenger);
         getActivity().startService(serviceIntent);
-        Log.v("iit","service started in fragment");
+        Log.v("iit", "service started in fragment");
         return rootView;
     }
 
@@ -75,22 +81,20 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
-                if(!isPlaying) {
+                if (!isPlaying) {
                     playAudio();
-                }else{
+                } else {
                     pauseAudio();
                 }
                 break;
             case R.id.stop_button:
-                if(isPlaying) {
-                    stopAudio();
-                }
+                stopAudio();
                 break;
         }
     }
 
 
-    private void playAudio(){
+    private void playAudio() {
         if (messengerToService != null) {
             try {
                 Message message = Message.obtain();
@@ -103,7 +107,7 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
 
     }
 
-    private void pauseAudio(){
+    private void pauseAudio() {
         if (messengerToService != null) {
             try {
                 Message message = Message.obtain();
@@ -116,7 +120,7 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
 
     }
 
-    private void stopAudio(){
+    private void stopAudio() {
         if (messengerToService != null) {
             try {
                 Message message = Message.obtain();
@@ -129,10 +133,23 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
 
     }
 
+    private void seekAudio(int progress) {
+        if (messengerToService != null) {
+            try {
+                Message message = Message.obtain();
+                message.what = AudioService.MEDIA_PLAYER_CONTROL_PROGRESS;
+                message.arg1 = progress;
+                messengerToService.send(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
 
     private void doBind() {
-        Log.v("iit","request service bind in fragment");
+        Log.v("iit", "request service bind in fragment");
         getActivity().bindService(
                 new Intent(getActivity(), AudioService.class),
                 mConnection, Context.BIND_AUTO_CREATE);
@@ -159,21 +176,52 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
         doUnbindService();
     }
 
-    private void updatePlayButton(){
+    private void updatePlayButton() {
         isPlaying = true;
         mPlayButton.setText("Pause");
 
     }
 
-    private void updatePauseButton(){
+    private void updatePauseButton() {
         isPlaying = false;
         mPlayButton.setText("Play");
+    }
+
+    private void stopPerformed() {
+        isPlaying = false;
+        mPlayButton.setText("Play");
+        mSeekBar.setProgress(0);
+    }
+
+    private void progressPerformed(int duration, int currentPosition) {
+        int progress =  (int)((float)currentPosition/(float)duration*100);
+        mSeekBar.setProgress(progress);
+    }
+
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (isSeek) {
+            seekAudio(progress);
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        isSeek = true;
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+isSeek = false;
     }
 
 
     /***********************************************************/
     /***************** private classes *************************/
-    /***********************************************************/
+    /**
+     * *******************************************************
+     */
 
     private class MediaPlayerServiceConnection implements ServiceConnection {
 
@@ -184,11 +232,11 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
             messengerToService = new Messenger(binder);
 
             //try {
-                //Message message = Message.obtain();
-                //message.what = MediaPlayerService.MEDIA_PLAYER_GET_PODCASTS;
-                //messengerToService.send(message);
+            //Message message = Message.obtain();
+            //message.what = MediaPlayerService.MEDIA_PLAYER_GET_PODCASTS;
+            //messengerToService.send(message);
             //} catch (RemoteException e1) {
-              //  e1.printStackTrace();
+            //  e1.printStackTrace();
             //}
         }
 
@@ -215,7 +263,6 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
                 case AudioService.MEDIA_PLAYER_SERVICE_STARTED:
                     target.doBind();
                     break;
-
                 case AudioService.MEDIA_PLAYER_CONTROL_START:
                     target.updatePlayButton();
                     break;
@@ -223,7 +270,11 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
                     target.updatePauseButton();
                     break;
                 case AudioService.MEDIA_PLAYER_CONTROL_STOP:
-                    target.updatePauseButton();
+                    target.stopPerformed();
+                    break;
+                case AudioService.MEDIA_PLAYER_CONTROL_PROGRESS:
+                    Log.v("asr","progress in app with duration = "+message.arg1+" and current position = "+message.arg2);
+                    target.progressPerformed(message.arg1, message.arg2);
                     break;
             }
         }
