@@ -17,5 +17,4 @@ public class Activity6 extends ActionBarActivity {
         setContentView(R.layout.activity_6_layout);
     }
 
-
 }

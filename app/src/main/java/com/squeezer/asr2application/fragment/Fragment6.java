@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,7 +20,6 @@ import android.widget.Button;
 import com.squeezer.asr2application.AudioService;
 import com.squeezer.asr2application.R;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 
@@ -30,10 +28,8 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
     public static final String MEDIA_PLAYER_APP_MESSENGER_KEY = "app_messenger";
 
 
-    private Button mButton;
-
-    private static OnButtonClicked mListener;
-
+    private Button mPlayButton;
+    private Button mStopButton;
 
     private AppHandler mHandler;
     private Messenger mAppMessenger;
@@ -42,11 +38,11 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
 
     private boolean isServiceConnected = false;
 
+    private boolean isPlaying =false;
 
 
-    public static Fragment6 newInstance(OnButtonClicked listener) {
 
-        mListener = listener;
+    public static Fragment6 newInstance() {
 
         return new Fragment6();
     }
@@ -58,8 +54,11 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_6_layout, container, false);
-        mButton = (Button) rootView.findViewById(R.id.play_button);
-        mButton.setOnClickListener(this);
+        mPlayButton = (Button) rootView.findViewById(R.id.play_button);
+        mPlayButton.setOnClickListener(this);
+
+        mStopButton = (Button) rootView.findViewById(R.id.stop_button);
+        mStopButton.setOnClickListener(this);
 
         mHandler = new AppHandler(this);
         mAppMessenger = new Messenger(mHandler);
@@ -76,7 +75,16 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
-                playAudio();
+                if(!isPlaying) {
+                    playAudio();
+                }else{
+                    pauseAudio();
+                }
+                break;
+            case R.id.stop_button:
+                if(isPlaying) {
+                    stopAudio();
+                }
                 break;
         }
     }
@@ -95,10 +103,33 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
 
     }
 
+    private void pauseAudio(){
+        if (messengerToService != null) {
+            try {
+                Message message = Message.obtain();
+                message.what = AudioService.MEDIA_PLAYER_CONTROL_PAUSE;
+                messengerToService.send(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
 
-    public interface OnButtonClicked {
-        public void buttonClicked();
     }
+
+    private void stopAudio(){
+        if (messengerToService != null) {
+            try {
+                Message message = Message.obtain();
+                message.what = AudioService.MEDIA_PLAYER_CONTROL_STOP;
+                messengerToService.send(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
 
     private void doBind() {
         Log.v("iit","request service bind in fragment");
@@ -126,6 +157,17 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
     public void onDestroyView() {
         super.onDestroyView();
         doUnbindService();
+    }
+
+    private void updatePlayButton(){
+        isPlaying = true;
+        mPlayButton.setText("Pause");
+
+    }
+
+    private void updatePauseButton(){
+        isPlaying = false;
+        mPlayButton.setText("Play");
     }
 
 
@@ -175,13 +217,14 @@ public class Fragment6 extends Fragment implements View.OnClickListener {
                     break;
 
                 case AudioService.MEDIA_PLAYER_CONTROL_START:
-                    //target.updatePlayBouton();
+                    target.updatePlayButton();
                     break;
                 case AudioService.MEDIA_PLAYER_CONTROL_PAUSE:
-                    //target.updatePausePBouton();
+                    target.updatePauseButton();
                     break;
-
-
+                case AudioService.MEDIA_PLAYER_CONTROL_STOP:
+                    target.updatePauseButton();
+                    break;
             }
         }
     }

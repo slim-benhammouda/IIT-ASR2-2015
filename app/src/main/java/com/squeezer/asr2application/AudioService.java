@@ -23,6 +23,7 @@ public class AudioService extends Service {
     public static final int MEDIA_PLAYER_SERVICE_STARTED = 10;
     public static final int MEDIA_PLAYER_CONTROL_START = 21;
     public static final int MEDIA_PLAYER_CONTROL_PAUSE = 22;
+    public static final int MEDIA_PLAYER_CONTROL_STOP = 23;
     public static final int MEDIA_PLAYER_SERVICE_CLIENT_UNBOUND = 30;
 
 
@@ -121,13 +122,13 @@ public class AudioService extends Service {
                     Log.v("iit","start requested in service");
                     target.mMediaPlayer.start();
 
-//                    try {
-//                        Message messagePlay = Message.obtain();
-//                        messagePlay.what = MEDIA_PLAYER_CONTROL_START;
-//                        target.messengerToApp.send(messagePlay);
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        Message messagePlay = Message.obtain();
+                        messagePlay.what = MEDIA_PLAYER_CONTROL_START;
+                        target.messengerToApp.send(messagePlay);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case AudioService.MEDIA_PLAYER_CONTROL_PAUSE:
                     target.mMediaPlayer.pause();
@@ -135,6 +136,16 @@ public class AudioService extends Service {
                         Message messagePause = Message.obtain();
                         messagePause.what = MEDIA_PLAYER_CONTROL_PAUSE;
                         target.messengerToApp.send(messagePause);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case AudioService.MEDIA_PLAYER_CONTROL_STOP:
+                    target.mMediaPlayer.stop();
+                    try {
+                        Message messageStop = Message.obtain();
+                        messageStop.what = MEDIA_PLAYER_CONTROL_STOP;
+                        target.messengerToApp.send(messageStop);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }

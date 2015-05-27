@@ -17,10 +17,6 @@ public class Activity5 extends ActionBarActivity {
         setContentView(R.layout.activity_5_layout);
         Fragment5 fragment5 = (Fragment5) getSupportFragmentManager().findFragmentById(R.id.fragment_5);
         Fragment2 fragment2 = (Fragment2) getSupportFragmentManager().findFragmentById(R.id.fragment_2);
-
-
-
-
     }
 
 
